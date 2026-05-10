@@ -4,10 +4,9 @@ import { useState, useMemo } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'
-import { ArrowRight, ShoppingCart, Plus, Minus, ChevronLeft, ChevronRight, X, Share2, Heart } from 'lucide-react'
+import { ArrowRight, MessageCircle, Plus, Minus, ChevronLeft, ChevronRight, X, Share2, Heart } from 'lucide-react'
 import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
-import { CartSlideOver } from '@/components/cart-slide-over'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -19,7 +18,7 @@ import { ProductCard } from '@/components/product-card'
 export default function ProductDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const { addToCart } = useStore()
+  const { siteSettings } = useStore()
   
   const productId = params.id as string
   const product = products.find(p => p.id === productId)
@@ -64,9 +63,19 @@ export default function ProductDetailPage() {
   const savings = product.retailPrice - product.wholesalePrice
   const savingsPercent = Math.round((savings / product.retailPrice) * 100)
 
-  const handleAddToCart = () => {
-    addToCart(product, quantity)
-    toast.success(`تمت إضافة ${quantity} ${product.unitAr} من ${product.nameAr} إلى السلة`)
+  const handleOrderViaWhatsApp = () => {
+    const whatsappNumber = siteSettings?.whatsappNumber || '967772652212'
+    const message = `مرحباً، أريد طلب هذا المنتج:
+
+*${product.nameAr}*
+الكمية: ${quantity} ${product.unitAr}
+السعر: ${formatPrice(product.wholesalePrice * quantity)}
+
+شكراً لكم!`
+    
+    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`
+    window.open(whatsappUrl, '_blank')
+    toast.success('جاري فتح واتساب...')
   }
 
   const handleShare = async () => {
@@ -271,12 +280,12 @@ export default function ProductDetailPage() {
               {/* Action Buttons */}
               <div className="flex gap-3">
                 <Button
-                  className="flex-1 bg-accent text-accent-foreground hover:bg-accent/90 h-12 text-lg"
-                  onClick={handleAddToCart}
+                  className="flex-1 bg-green-600 text-white hover:bg-green-700 h-12 text-lg"
+                  onClick={handleOrderViaWhatsApp}
                   disabled={product.stock === 0}
                 >
-                  <ShoppingCart className="h-5 w-5 ml-2" />
-                  أضف للسلة
+                  <MessageCircle className="h-5 w-5 ml-2" />
+                  اطلب عبر واتساب
                 </Button>
                 <Button
                   variant="outline"
@@ -408,7 +417,6 @@ export default function ProductDetailPage() {
       )}
 
       <Footer />
-      <CartSlideOver />
     </div>
   )
 }

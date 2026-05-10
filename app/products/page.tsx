@@ -6,7 +6,6 @@ import { useSearchParams } from 'next/navigation'
 import { Search, SlidersHorizontal, X, ArrowRight } from 'lucide-react'
 import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
-import { CartSlideOver } from '@/components/cart-slide-over'
 import { WhatsAppChat } from '@/components/whatsapp-chat'
 import { ProductCard } from '@/components/product-card'
 import { Input } from '@/components/ui/input'
@@ -218,7 +217,6 @@ export default function ProductsPage() {
         </div>
       </main>
       <Footer />
-      <CartSlideOver />
       <WhatsAppChat />
     </div>
   )

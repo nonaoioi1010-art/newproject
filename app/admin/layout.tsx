@@ -27,7 +27,7 @@ export default function AdminLayout({
   useEffect(() => {
     // Check if user is admin
     if (!user?.isAdmin) {
-      router.push('/login')
+      router.push('/damin-portal')
     }
   }, [user, router])
 

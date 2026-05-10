@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { ShoppingCart, Star } from 'lucide-react'
+import { MessageCircle, Star } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { formatPrice, useStore, type Product } from '@/lib/store'
@@ -13,15 +13,25 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product }: ProductCardProps) {
-  const { addToCart, favorites, addToFavorites, removeFromFavorites } = useStore()
+  const { favorites, addToFavorites, removeFromFavorites, siteSettings } = useStore()
   
   const isFavorite = favorites.includes(product.id)
 
-  const handleAddToCart = (e: React.MouseEvent) => {
+  const handleOrderViaWhatsApp = (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
-    addToCart(product, 1)
-    toast.success(`تمت إضافة ${product.nameAr} إلى السلة`)
+    
+    const whatsappNumber = siteSettings?.whatsappNumber || '967772652212'
+    const message = `مرحباً، أريد طلب هذا المنتج:
+
+*${product.nameAr}*
+السعر: ${formatPrice(product.wholesalePrice)}
+
+شكراً لكم!`
+    
+    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`
+    window.open(whatsappUrl, '_blank')
+    toast.success('جاري فتح واتساب...')
   }
 
   const handleToggleFavorite = (e: React.MouseEvent) => {
@@ -88,11 +98,11 @@ export function ProductCard({ product }: ProductCardProps) {
           </div>
 
           <Button
-            className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
-            onClick={handleAddToCart}
+            className="w-full bg-green-600 text-white hover:bg-green-700"
+            onClick={handleOrderViaWhatsApp}
           >
-            <ShoppingCart className="h-4 w-4 ml-2" />
-            أضف للسلة
+            <MessageCircle className="h-4 w-4 ml-2" />
+            اطلب عبر واتساب
           </Button>
         </CardContent>
       </Card>

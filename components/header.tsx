@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { ShoppingCart, Menu, Search, User, Package, Settings, LogOut, Star } from 'lucide-react'
+import { Menu, Search, Package, Settings, LogOut, Star } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useStore } from '@/lib/store'
@@ -22,15 +22,12 @@ const navLinks = [
   { href: '/products', label: 'المنتجات' },
   { href: '/categories', label: 'الأقسام' },
   { href: '/favorites', label: 'المفضلة', icon: Star },
-  { href: '/orders', label: 'طلباتي' },
 ]
 
 export function Header() {
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
-  const { cart, setCartOpen, user, setUser, siteSettings } = useStore()
-  
-  const cartItemsCount = cart.reduce((total, item) => total + item.quantity, 0)
+  const { user, setUser, siteSettings } = useStore()
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-primary text-primary-foreground">
@@ -95,8 +92,8 @@ export function Header() {
               <Search className="h-5 w-5" />
             </Button>
 
-            {/* User */}
-            {user ? (
+            {/* Admin Only - Show if admin is logged in */}
+            {user?.isAdmin && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
@@ -104,7 +101,7 @@ export function Header() {
                     size="icon"
                     className="text-primary-foreground hover:bg-primary-foreground/10"
                   >
-                    <User className="h-5 w-5" />
+                    <Settings className="h-5 w-5" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
@@ -112,26 +109,15 @@ export function Header() {
                     <div className="flex flex-col">
                       <span>{user.name}</span>
                       <span className="text-xs text-muted-foreground font-normal">
-                        {user.email || user.phone}
+                        مدير النظام
                       </span>
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  {user.isAdmin && (
-                    <>
-                      <DropdownMenuItem asChild>
-                        <Link href="/admin" className="flex items-center gap-2 cursor-pointer">
-                          <Settings className="h-4 w-4" />
-                          لوحة الإدارة
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                    </>
-                  )}
                   <DropdownMenuItem asChild>
-                    <Link href="/orders" className="flex items-center gap-2 cursor-pointer">
+                    <Link href="/admin" className="flex items-center gap-2 cursor-pointer">
                       <Package className="h-4 w-4" />
-                      طلباتي
+                      لوحة الإدارة
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
@@ -144,32 +130,7 @@ export function Header() {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-            ) : (
-              <Link href="/login">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="text-primary-foreground hover:bg-primary-foreground/10"
-                >
-                  <User className="h-5 w-5" />
-                </Button>
-              </Link>
             )}
-
-            {/* Cart */}
-            <Button
-              variant="ghost"
-              size="icon"
-              className="relative text-primary-foreground hover:bg-primary-foreground/10"
-              onClick={() => setCartOpen(true)}
-            >
-              <ShoppingCart className="h-5 w-5" />
-              {cartItemsCount > 0 && (
-                <span className="absolute -top-1 -left-1 flex h-5 w-5 items-center justify-center rounded-full bg-accent text-xs font-bold text-accent-foreground">
-                  {cartItemsCount}
-                </span>
-              )}
-            </Button>
 
             {/* Mobile Menu */}
             <Sheet>
@@ -193,20 +154,18 @@ export function Header() {
                       {link.label}
                     </Link>
                   ))}
-                  {user ? (
+                  {user?.isAdmin && (
                     <div className="pt-4 border-t border-border space-y-3">
                       <div>
                         <p className="text-sm text-muted-foreground">مرحباً</p>
                         <p className="font-medium">{user.name}</p>
                       </div>
-                      {user.isAdmin && (
-                        <Link href="/admin">
-                          <Button className="w-full bg-accent text-accent-foreground hover:bg-accent/90">
-                            <Settings className="h-4 w-4 ml-2" />
-                            لوحة الإدارة
-                          </Button>
-                        </Link>
-                      )}
+                      <Link href="/admin">
+                        <Button className="w-full bg-accent text-accent-foreground hover:bg-accent/90">
+                          <Settings className="h-4 w-4 ml-2" />
+                          لوحة الإدارة
+                        </Button>
+                      </Link>
                       <Button 
                         variant="outline" 
                         className="w-full"
@@ -216,12 +175,6 @@ export function Header() {
                         تسجيل الخروج
                       </Button>
                     </div>
-                  ) : (
-                    <Link href="/login">
-                      <Button className="w-full mt-4 bg-accent text-accent-foreground hover:bg-accent/90">
-                        تسجيل الدخول
-                      </Button>
-                    </Link>
                   )}
                 </nav>
               </SheetContent>

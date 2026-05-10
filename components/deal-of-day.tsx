@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
-import { Timer, ShoppingCart, Flame } from 'lucide-react'
+import { Timer, MessageCircle, Flame } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { formatPrice, useStore } from '@/lib/store'
 import { toast } from 'sonner'
@@ -13,7 +13,7 @@ export function DealOfDay() {
     minutes: 0,
     seconds: 0,
   })
-  const { addToCart, siteSettings } = useStore()
+  const { siteSettings } = useStore()
   
   // Get deal settings from store
   const dealOfDay = siteSettings?.dealOfDay
@@ -47,26 +47,19 @@ export function DealOfDay() {
 
   const discountedPrice = dealOfDay.originalPrice * (1 - dealOfDay.discount / 100)
 
-  const handleAddToCart = () => {
-    // Create a product object from the deal
-    const dealProduct = {
-      id: dealOfDay.productId || 'deal-product',
-      name: dealOfDay.productName,
-      nameAr: dealOfDay.productName,
-      description: dealOfDay.productDescription,
-      descriptionAr: dealOfDay.productDescription,
-      wholesalePrice: discountedPrice,
-      retailPrice: dealOfDay.originalPrice,
-      minQuantity: 1,
-      category: 'deals',
-      categoryAr: 'العروض',
-      image: dealOfDay.productImage,
-      stock: 100,
-      unit: 'piece',
-      unitAr: 'قطعة',
-    }
-    addToCart(dealProduct, 1)
-    toast.success(`تمت إضافة ${dealOfDay.productName} إلى السلة`)
+  const handleOrderViaWhatsApp = () => {
+    const whatsappNumber = siteSettings?.whatsappNumber || '967772652212'
+    const message = `مرحباً، أريد طلب عرض اليوم:
+
+*${dealOfDay.productName}*
+السعر بعد الخصم: ${formatPrice(discountedPrice)}
+(السعر الأصلي: ${formatPrice(dealOfDay.originalPrice)})
+
+شكراً لكم!`
+    
+    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`
+    window.open(whatsappUrl, '_blank')
+    toast.success('جاري فتح واتساب...')
   }
 
   return (
@@ -143,11 +136,11 @@ export function DealOfDay() {
 
               <Button
                 size="lg"
-                className="w-full bg-accent text-accent-foreground hover:bg-accent/90"
-                onClick={handleAddToCart}
+                className="w-full bg-green-600 text-white hover:bg-green-700"
+                onClick={handleOrderViaWhatsApp}
               >
-                <ShoppingCart className="h-5 w-5 ml-2" />
-                أضف إلى السلة
+                <MessageCircle className="h-5 w-5 ml-2" />
+                اطلب عبر واتساب
               </Button>
             </div>
           </div>
