@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { Package, Coffee, Sparkles, Heart, Cpu, Home, ArrowRight } from 'lucide-react'
 import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
+import { CartSlideOver } from '@/components/cart-slide-over'
 import { categories, products } from '@/lib/data'
 
 const categoryIcons: Record<string, React.ElementType> = {
@@ -86,6 +87,7 @@ export default function CategoriesPage() {
         </div>
       </main>
       <Footer />
+      <CartSlideOver />
     </div>
   )
 }

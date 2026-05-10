@@ -3,6 +3,7 @@ import { HeroSlider } from '@/components/hero-slider'
 import { CategoriesSection } from '@/components/categories-section'
 import { DealOfDay } from '@/components/deal-of-day'
 import { FeaturedProducts } from '@/components/featured-products'
+import { CartSlideOver } from '@/components/cart-slide-over'
 import { Footer } from '@/components/footer'
 import { WhatsAppChat } from '@/components/whatsapp-chat'
 
@@ -21,6 +22,7 @@ export default function HomePage() {
         <FeaturedProducts />
       </main>
       <Footer />
+      <CartSlideOver />
       <WhatsAppChat />
     </div>
   )

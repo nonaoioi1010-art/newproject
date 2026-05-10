@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Menu, Search, Package, Settings, LogOut, Star } from 'lucide-react'
+import { Menu, Search, Package, Settings, LogOut, Star, ShoppingCart } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useStore } from '@/lib/store'
@@ -27,7 +27,9 @@ const navLinks = [
 export function Header() {
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
-  const { user, setUser, siteSettings } = useStore()
+  const { cart, setCartOpen, user, setUser, siteSettings } = useStore()
+  
+  const cartItemsCount = cart.reduce((total, item) => total + item.quantity, 0)
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-primary text-primary-foreground">
@@ -90,6 +92,21 @@ export function Header() {
               onClick={() => setIsSearchOpen(!isSearchOpen)}
             >
               <Search className="h-5 w-5" />
+            </Button>
+
+            {/* Cart */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="relative text-primary-foreground hover:bg-primary-foreground/10"
+              onClick={() => setCartOpen(true)}
+            >
+              <ShoppingCart className="h-5 w-5" />
+              {cartItemsCount > 0 && (
+                <span className="absolute -top-1 -left-1 flex h-5 w-5 items-center justify-center rounded-full bg-accent text-xs font-bold text-accent-foreground">
+                  {cartItemsCount}
+                </span>
+              )}
             </Button>
 
             {/* Admin Only - Show if admin is logged in */}

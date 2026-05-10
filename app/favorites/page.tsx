@@ -2,6 +2,7 @@
 
 import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
+import { CartSlideOver } from '@/components/cart-slide-over'
 import { WhatsAppChat } from '@/components/whatsapp-chat'
 import { ProductCard } from '@/components/product-card'
 import { useStore } from '@/lib/store'
@@ -65,6 +66,7 @@ export default function FavoritesPage() {
         </div>
       </main>
       <Footer />
+      <CartSlideOver />
       <WhatsAppChat />
     </div>
   )
